@@ -11,7 +11,7 @@ def parseArgs(if_redef=True):
 	parser = configargparse .ArgumentParser(formatter_class=configargparse .ArgumentDefaultsHelpFormatter)
 
 	# -- env settings
-	parser.add_argument('--ds_fd', default='/scratch/liu.shu/datasets',
+	parser.add_argument('--ds_fd', default='/home/edabk/Sleeping_pos/',
 		                    help='dataset directionry')  # for discovery
 	parser.add_argument('--output_dir', default='output', help='default output dirs')  # code local.
 	parser.add('--modelConf', default='config/HRpose.conf', is_config_file=True, help='Path to config file')
@@ -56,7 +56,7 @@ def parseArgs(if_redef=True):
 	parser.add_argument('--lr_dec_epoch', nargs='+', type=int, default=[70, 90],
 	                    help='the lr decay epoch, each time by decay factor ori 17,21')  # form string sec dec17-21 if needed
 	parser.add_argument('--lr_dec_factor', default=0.1, type=float)
-	parser.add_argument('--batch_size_pGPU', default=60, type=int, help='batch size per gpu')
+	parser.add_argument('--batch_size_pGPU', default=128, type=int, help='batch size per gpu')
 
 	# test batch size 16 what is the reason,, no idea
 	parser.add_argument('--gpu_ids', nargs='+', default=[0], type=int, help='the ids of the gpu')

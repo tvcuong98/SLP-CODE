@@ -55,13 +55,17 @@ def train(loader, ds_rd, model, criterion, optimizer, epoch, n_iter=-1, logger=N
 	end = time.time()
 	li_loss = []
 	li_acc = []
+	number_of_iters=0
 	for i, inp_dct in enumerate(loader):
+		number_of_iters+=1
 		# get items
 		if i>=n_iter and n_iter>0:    # break if iter is set and i is greater than that
 			break
 		input = inp_dct['pch']
-		target = inp_dct['hms']     # 14 x 64 x 1??
+		target = inp_dct['hms']     # 14 x 64 x 1?? 
+		#print(target.shape) # have shape torch.Size([m, 14, 64, 64])
 		target_weight = inp_dct['joints_vis']
+		#print(target_weight.shape) # have shape torch.Size([m, 14, 1])
 
 		# measure data loading time     weight, visible or not
 		data_time.update(time.time() - end)
@@ -133,7 +137,7 @@ def train(loader, ds_rd, model, criterion, optimizer, epoch, n_iter=-1, logger=N
 			logger.info(msg)
 			li_loss.append(losses.val)   # the current loss
 			li_acc.append(acc.val)
-
+	print("number_of_iters",number_of_iters)
 	return {'losses':li_loss, 'accs':li_acc}
 
 
@@ -178,6 +182,7 @@ def validate(loader, ds_rd, model, criterion, n_iter=-1, logger=None, opts=None,
 			target_weight = inp_dct['joints_vis']
 			bb = inp_dct['bb']
 			joints_ori = inp_dct['joints_ori']
+			#print(joints_ori)
 			l_std_ori = inp_dct['l_std_ori']
 			if i>= n_iter and n_iter>0:     # limiting iters
 				break
@@ -276,7 +281,7 @@ def validate(loader, ds_rd, model, criterion, n_iter=-1, logger=None, opts=None,
 					i, len(loader), batch_time=batch_time,
 					loss=losses, acc=acc)
 				logger.info(msg)
-
+		print(len(li_joints_ori))
 	preds_hm = np.concatenate(preds_hm,axis=0)      # N x n_jt  x 2
 	bbs = np.concatenate(bbs, axis=0)
 	joints_ori = np.concatenate(li_joints_ori, axis=0)

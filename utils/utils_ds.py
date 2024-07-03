@@ -224,9 +224,9 @@ def get_max_preds(batch_heatmaps):
 	num_joints = batch_heatmaps.shape[1]
 	width = batch_heatmaps.shape[3]
 	heatmaps_reshaped = batch_heatmaps.reshape((batch_size, num_joints, -1))
-	idx = np.argmax(heatmaps_reshaped, 2)
+	idx = np.argmax(heatmaps_reshaped, 2) #computes the index of the maximum value along the last dimension
 	maxvals = np.amax(heatmaps_reshaped, 2)  # amax, array max
-
+											 # maximum value along the last dimension
 	maxvals = maxvals.reshape((batch_size, num_joints, 1))
 	idx = idx.reshape((batch_size, num_joints, 1))
 
@@ -312,8 +312,8 @@ def accuracy(output, target, hm_type='gaussian', thr=0.5):
 	idx = list(range(output.shape[1]))  # N x n_jts
 	norm = 1.0  # norm is fixed ? why ?
 	if hm_type == 'gaussian':
-		pred, _ = get_max_preds(output)
-		target, _ = get_max_preds(target)
+		pred, _ = get_max_preds(output) # shape m,14,64,64 -> m,14,2
+		target, _ = get_max_preds(target) # shape m,14,64,64 -> m,14,2
 		h = output.shape[2]
 		w = output.shape[3]
 		norm = np.ones((pred.shape[0], 2)) * np.array([h, w]) / 10  # use 0.1 as norm

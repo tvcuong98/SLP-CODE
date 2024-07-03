@@ -115,7 +115,7 @@ class SLP_RD:  # slp reader
 	def __init__(self, opts, phase='train', if_0base=True):
 		'''
 		for simplab,
-		:param opts:
+		:param opts:`~
 			phase [train|test]
 			sz_pch = 255  or 288 (model)
 			SLP_fd = the folder of dana or sim
@@ -167,7 +167,7 @@ class SLP_RD:  # slp reader
 			'IR': [0.077975444],
 			'PM': [0.038837425],
 		}
-
+         # 0 < n_split < n_subj
 		if 'train' == phase:        # default train  / or test
 			idxs_subj = range(n_split)
 		elif 'test' == phase:
@@ -194,7 +194,7 @@ class SLP_RD:  # slp reader
 		# right lower arm,
 		# righ upper leg,
 		# right lower leg
-		self.phys_arr = phys_arr.astype(np.float)  # all list
+		self.phys_arr = phys_arr.astype(np.float64)  # all list
 
 		pthDesc_li = []  # pth descriptor, make abs from 1,  ds_phase list
 		self.li_joints_gt_RGB = []  # for list generation
@@ -223,6 +223,7 @@ class SLP_RD:  # slp reader
 			joints_gt_RGB_t = joints_gt_RGB_t.transpose([2, 1, 0])
 			joints_gt_IR_t = sio.loadmat(os.path.join(dsFd, '{:05d}'.format(i + 1), 'joints_gt_IR.mat'))[
 				'joints_gt'].transpose([2, 1, 0])
+			#print("joint_gt_IR: ",joints_gt_IR_t.shape)
 			if if_0base:
 				joints_gt_RGB_t = joints_gt_RGB_t - 1  # to 0 based
 				joints_gt_IR_t = joints_gt_IR_t - 1
@@ -245,7 +246,7 @@ class SLP_RD:  # slp reader
 				self.li_caliPM.append(caliPM)       # N x 3 x 45
 			# update li
 			self.li_joints_gt_RGB.append(joints_gt_RGB_t)  # n_subj x [ n_frm x n_jt x 3]
-			self.li_joints_gt_IR.append(joints_gt_IR_t)
+			self.li_joints_gt_IR.append(joints_gt_IR_t) # n_subj x [ n_frm x n_jt x 3]
 			self.li_joints_gt_depth.append(joints_gt_depth_t)
 			self.li_joints_gt_PM.append(joints_gt_PM_t)
 			self.li_bb_RGB.append(np.array(list(map(ut.get_bbox, joints_gt_RGB_t))))  # n_subj x 45 x4
@@ -257,9 +258,15 @@ class SLP_RD:  # slp reader
 			self.li_bb_sq_IR.append(np.array(list(map(lambda x: ut.get_bbox(x, rt_xy=1), joints_gt_IR_t))))
 			self.li_bb_sq_depth.append(np.array(list(map(lambda x: ut.get_bbox(x, rt_xy=1), joints_gt_depth_t))))
 			self.li_bb_sq_PM.append(np.array(list(map(lambda x: ut.get_bbox(x, rt_xy=1), joints_gt_PM_t))))  # only upper level is list
-
+		# print(len(self.li_joints_gt_IR))
+		# print(len(self.li_joints_gt_IR[0]))
+		# print(len(self.li_joints_gt_IR[0][0]))
+		# print(len(self.li_joints_gt_IR[0][0][0]))
+		#102,45,14,3
+		#print(self.li_joints_gt_IR)
+		#print(len(self.li_joints_gt_IR[0][0][0][0]))
 		for i in idxs_subj:
-			for cov in opts.cov_li:  # add pth Descriptor
+			for cov in opts.cov_li:  # add pth Descriptor  # The cover condition [cover1,cover2,uncover]
 				for j in range(n_frm):
 					pthDesc_li.append([i + 1, cov, j + 1])  # file idx 1 based,  sample idx 0 based
 		self.pthDesc_li = pthDesc_li    # id is 1 started for file compatibility

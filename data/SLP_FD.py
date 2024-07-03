@@ -150,6 +150,7 @@ class SLP_FD(Dataset):
 		'''
 		mods = self.opts.mod_src
 		n_jt = self.ds.joint_num_ori    # use ori joint
+		#print(n_jt)
 		sz_pch = self.opts.sz_pch
 		out_shp = self.opts.out_shp[:2]
 		ds = self.ds
@@ -159,7 +160,7 @@ class SLP_FD(Dataset):
 		li_std = []
 		img, joints_ori, bb = self.ds.get_array_joints(idx, mod=mod0, if_sq_bb=True)  # raw depth    # how transform
 		joints_ori = joints_ori[:n_jt, :2]  # take only the original jts
-
+		#print(joints_ori.shape)
 		img_height, img_width = img.shape[:2]       #first 2
 		if not self.opts.if_bb:
 			# sz_ori = self.ds.sz_RGB
